@@ -241,6 +241,15 @@
         state.lastFeed = latest("🍽️ Matad");
         state.lastFormula = latest("🍼 Ersättning");
         state.lastVitaminD = latest("☀️ D-vitamin");
+
+        // Derive lastNapEnd and lastNapDuration from logs
+        const rev = [...logs].reverse();
+        const lastEnd = rev.find(l => l.label.startsWith("💤 Nap avslutad"));
+        if (lastEnd) {
+          state.lastNapEnd = lastEnd.ts;
+          const lastStart = rev.find(l => l.label === "😴 Nap startad" && l.ts <= lastEnd.ts);
+          state.lastNapDuration = lastStart ? lastEnd.ts - lastStart.ts : state.lastNapDuration;
+        }
       };
 
       window.adjustTime = (unit, delta) => {
