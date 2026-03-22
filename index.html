@@ -226,28 +226,41 @@
         render();
       };
 
+      let _editTs = 0;
+      let _editIndex = -1;
+
+      const pad2 = n => String(n).padStart(2, "0");
+
+      const updateTimePicker = () => {
+        const d = new Date(_editTs);
+        document.getElementById("tm-h").textContent = pad2(d.getHours());
+        document.getElementById("tm-m").textContent = pad2(d.getMinutes());
+        document.getElementById("tm-s").textContent = pad2(d.getSeconds());
+      };
+
+      window.adjustTime = (unit, delta) => {
+        if (unit === "h") _editTs += delta * 3600000;
+        else if (unit === "m") _editTs += delta * 60000;
+        else _editTs += delta * 1000;
+        updateTimePicker();
+      };
+
       window.editLogTime = (index) => {
         const entry = state.logs[index];
-        const input = document.getElementById("time-input");
-        const modal = document.getElementById("time-modal");
+        _editIndex = index;
+        _editTs = entry.ts;
 
-        const d = new Date(entry.ts);
-        input.value = new Date(d - d.getTimezoneOffset() * 60000)
-          .toISOString().slice(0, 16);
-
-        modal.style.display = "flex";
+        updateTimePicker();
+        document.getElementById("time-modal").style.display = "flex";
 
         document.getElementById("time-ok").onclick = () => {
-          const newTs = new Date(input.value).getTime();
-          if (!isNaN(newTs)) {
-            state.logs[index] = { ...entry, ts: newTs };
-            saveState();
-            render();
-          }
-          modal.style.display = "none";
+          state.logs[_editIndex] = { ...state.logs[_editIndex], ts: _editTs };
+          saveState();
+          render();
+          document.getElementById("time-modal").style.display = "none";
         };
         document.getElementById("time-cancel").onclick = () => {
-          modal.style.display = "none";
+          document.getElementById("time-modal").style.display = "none";
         };
       };
 
@@ -330,7 +343,7 @@
                 <span style="font-size:15px">${l.label}</span>
                 <span style="display:flex;align-items:center;gap:10px">
                   <span style="font-size:12px;color:#a07850">${formatTime(l.ts)} · ${timeAgo(l.ts)}</span>
-                  <button onclick="editLogTime(${i})" style="background:none;border:none;color:#c0a080;font-size:14px;padding:0;line-height:1;cursor:pointer">✏️</button>
+                  ${window.innerWidth > 200 ? `<button onclick="editLogTime(${i})" style="background:none;border:none;color:#c0a080;font-size:14px;padding:0;line-height:1;cursor:pointer">✏️</button>` : ""}
                   <button onclick="deleteLog(${i})" style="background:none;border:none;color:#c0a080;font-size:16px;padding:0;line-height:1;cursor:pointer">✕</button>
                 </span>
               </div>`).join("");
@@ -539,7 +552,28 @@
     <div id="time-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center;">
       <div style="background:#fdf6ee;border-radius:16px;padding:24px;width:280px;font-family:Georgia,serif;">
         <div style="font-size:15px;font-weight:bold;margin-bottom:16px;color:#2c1a0e">Ändra tid</div>
-        <input id="time-input" type="datetime-local" style="width:100%;padding:10px;border:1.5px solid #e8d5b7;border-radius:10px;font-size:15px;font-family:Georgia,serif;color:#2c1a0e;background:#fff;margin-bottom:16px" />
+        <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:20px">
+          <!-- Hours -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <button onclick="adjustTime('h',1)" style="width:44px;height:44px;border:1.5px solid #e8d5b7;border-radius:10px;background:#fff;font-size:20px;color:#7a5c3a;cursor:pointer">+</button>
+            <span id="tm-h" style="font-size:22px;font-weight:bold;color:#2c1a0e;min-width:32px;text-align:center"></span>
+            <button onclick="adjustTime('h',-1)" style="width:44px;height:44px;border:1.5px solid #e8d5b7;border-radius:10px;background:#fff;font-size:20px;color:#7a5c3a;cursor:pointer">−</button>
+          </div>
+          <span style="font-size:24px;font-weight:bold;color:#2c1a0e;padding-bottom:2px">:</span>
+          <!-- Minutes -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <button onclick="adjustTime('m',1)" style="width:44px;height:44px;border:1.5px solid #e8d5b7;border-radius:10px;background:#fff;font-size:20px;color:#7a5c3a;cursor:pointer">+</button>
+            <span id="tm-m" style="font-size:22px;font-weight:bold;color:#2c1a0e;min-width:32px;text-align:center"></span>
+            <button onclick="adjustTime('m',-1)" style="width:44px;height:44px;border:1.5px solid #e8d5b7;border-radius:10px;background:#fff;font-size:20px;color:#7a5c3a;cursor:pointer">−</button>
+          </div>
+          <span style="font-size:24px;font-weight:bold;color:#2c1a0e;padding-bottom:2px">:</span>
+          <!-- Seconds -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <button onclick="adjustTime('s',1)" style="width:44px;height:44px;border:1.5px solid #e8d5b7;border-radius:10px;background:#fff;font-size:20px;color:#7a5c3a;cursor:pointer">+</button>
+            <span id="tm-s" style="font-size:22px;font-weight:bold;color:#2c1a0e;min-width:32px;text-align:center"></span>
+            <button onclick="adjustTime('s',-1)" style="width:44px;height:44px;border:1.5px solid #e8d5b7;border-radius:10px;background:#fff;font-size:20px;color:#7a5c3a;cursor:pointer">−</button>
+          </div>
+        </div>
         <div style="display:flex;gap:10px">
           <button id="time-cancel" style="flex:1;padding:12px;border:1.5px solid #e8d5b7;border-radius:10px;background:#fff;font-size:14px;font-family:Georgia,serif;color:#7a5c3a">Avbryt</button>
           <button id="time-ok" style="flex:1;padding:12px;border:none;border-radius:10px;background:#c9a97a;color:#fff;font-size:14px;font-weight:bold;font-family:Georgia,serif">Spara</button>
