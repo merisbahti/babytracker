@@ -227,6 +227,31 @@
         render();
       };
 
+      window.editLogTime = (index) => {
+        const entry = state.logs[index];
+        const input = document.getElementById("time-input");
+        const modal = document.getElementById("time-modal");
+
+        const d = new Date(entry.ts);
+        input.value = new Date(d - d.getTimezoneOffset() * 60000)
+          .toISOString().slice(0, 16);
+
+        modal.style.display = "flex";
+
+        document.getElementById("time-ok").onclick = () => {
+          const newTs = new Date(input.value).getTime();
+          if (!isNaN(newTs)) {
+            state.logs[index] = { ...entry, ts: newTs };
+            saveState();
+            render();
+          }
+          modal.style.display = "none";
+        };
+        document.getElementById("time-cancel").onclick = () => {
+          modal.style.display = "none";
+        };
+      };
+
       // ── Render ────────────────────────────────────
       function render() {
         const napDur = state.napping && state.napStart
@@ -321,6 +346,7 @@
                 <span style="font-size:15px">${l.label}</span>
                 <span style="display:flex;align-items:center;gap:10px">
                   <span style="font-size:12px;color:#a07850">${formatTime(l.ts)} · ${timeAgo(l.ts)}</span>
+                  <button onclick="editLogTime(${i})" style="background:none;border:none;color:#c0a080;font-size:14px;padding:0;line-height:1;cursor:pointer">✏️</button>
                   <button onclick="deleteLog(${i})" style="background:none;border:none;color:#c0a080;font-size:16px;padding:0;line-height:1;cursor:pointer">✕</button>
                 </span>
               </div>`).join("");
@@ -526,6 +552,17 @@
     </style>
   </head>
   <body>
+    <div id="time-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center;">
+      <div style="background:#fdf6ee;border-radius:16px;padding:24px;width:280px;font-family:Georgia,serif;">
+        <div style="font-size:15px;font-weight:bold;margin-bottom:16px;color:#2c1a0e">Ändra tid</div>
+        <input id="time-input" type="datetime-local" style="width:100%;padding:10px;border:1.5px solid #e8d5b7;border-radius:10px;font-size:15px;font-family:Georgia,serif;color:#2c1a0e;background:#fff;margin-bottom:16px" />
+        <div style="display:flex;gap:10px">
+          <button id="time-cancel" style="flex:1;padding:12px;border:1.5px solid #e8d5b7;border-radius:10px;background:#fff;font-size:14px;font-family:Georgia,serif;color:#7a5c3a">Avbryt</button>
+          <button id="time-ok" style="flex:1;padding:12px;border:none;border-radius:10px;background:#c9a97a;color:#fff;font-size:14px;font-weight:bold;font-family:Georgia,serif">Spara</button>
+        </div>
+      </div>
+    </div>
+
     <div id="loading">⏳ Ansluter till Firebase...</div>
 
     <div id="app">
