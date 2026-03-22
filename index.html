@@ -8,8 +8,8 @@
     />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Doris" />
-    <title>🌸 Doris</title>
+    <meta name="apple-mobile-web-app-title" content="Baby Tracker" />
+    <title>🌸 Baby Tracker</title>
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
@@ -31,9 +31,18 @@
         appId: "1:928305137904:web:aa914759d17e7f78839a35",
       };
 
-      const ROOM =
-        new URLSearchParams(window.location.search).get("room") ||
-        "doris";
+      const ROOM = new URLSearchParams(window.location.search).get(
+        "room",
+      );
+      if (!ROOM) {
+        document.addEventListener("DOMContentLoaded", () => {
+          document.body.innerHTML =
+            `<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#7a5c3a;font-size:16px;padding:20px;text-align:center">
+            Inget rum angivet.<br><br>Lägg till <code style="background:#f5ece0;padding:2px 6px;border-radius:4px">?room=dittrum</code> i URL:en.
+          </div>`;
+        });
+        throw new Error("Missing room parameter");
+      }
 
       // Use 0 instead of null — Firebase silently strips null/false fields on write,
       // causing them to be missing on read, which made state reset on refresh.
@@ -55,7 +64,7 @@
         try {
           const app = initializeApp(firebaseConfig);
           const db = getDatabase(app);
-          dbRef = ref(db, `doris-tracker/${ROOM}`);
+          dbRef = ref(db, `tracker/${ROOM}`);
 
           onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
@@ -236,8 +245,8 @@
           ? "😴"
           : "👀";
         document.getElementById("nap-label").textContent = state.napping
-          ? "Doris sover"
-          : "Doris är vaken";
+          ? "Sover"
+          : "Vaken";
         document.getElementById("nap-timer").textContent = state.napping
           ? formatDuration(napDur)
           : "";
@@ -498,7 +507,7 @@
     <div id="app">
       <div class="header">
         <div>
-          <div class="header-title">🌸 Doris</div>
+          <div class="header-title">🌸 Baby Tracker</div>
           <div class="header-room" id="room-label">rum: —</div>
           <div class="header-status" id="status">⏳ Ansluter...</div>
         </div>
@@ -520,7 +529,7 @@
         <div class="main-pad">
           <div class="nap-banner" id="nap-banner">
             <div class="nap-emoji" id="nap-emoji">👀</div>
-            <div class="nap-label" id="nap-label">Doris är vaken</div>
+            <div class="nap-label" id="nap-label">Vaken</div>
             <div class="nap-timer" id="nap-timer"></div>
             <div class="nap-sub" id="nap-sub"></div>
           </div>
