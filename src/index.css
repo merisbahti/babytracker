@@ -48,36 +48,9 @@ button:active {
 .main-pad {
   padding: 20px 16px;
 }
-.nap-banner {
-  border-radius: 16px;
-  padding: 16px 20px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-.nap-emoji {
-  font-size: 32px;
-}
-.nap-label {
-  font-size: 17px;
-  font-weight: bold;
-  margin-top: 6px;
-}
-.nap-timer {
-  font-size: 22px;
-  font-weight: bold;
-  margin-top: 4px;
-  min-height: 28px;
-}
-.nap-sub {
-  font-size: 13px;
-  margin-top: 4px;
-  min-height: 18px;
-  opacity: 0.75;
-}
-
 .nap-btn {
   width: 100%;
-  padding: 22px 0;
+  padding: 18px 0 14px;
   font-size: 20px;
   font-weight: bold;
   color: #fff;
@@ -85,6 +58,16 @@ button:active {
   border-radius: 18px;
   margin-bottom: 16px;
   letter-spacing: 0.5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.nap-btn-sub {
+  font-size: 13px;
+  font-weight: normal;
+  opacity: 0.8;
+  min-height: 16px;
 }
 
 .grid2 {
@@ -327,29 +310,14 @@ button:active {
   .main-pad {
     padding: 8px 6px;
   }
-  .nap-banner {
-    padding: 8px 6px;
-    margin-bottom: 8px;
-    border-radius: 10px;
-  }
-  .nap-emoji {
-    font-size: 28px;
-  }
-  .nap-label {
-    font-size: 18px;
-    margin-top: 2px;
-  }
-  .nap-timer {
-    font-size: 24px;
-  }
-  .nap-sub {
-    font-size: 13px;
-  }
   .nap-btn {
-    padding: 16px 0;
+    padding: 12px 0 10px;
     font-size: 18px;
     margin-bottom: 8px;
     border-radius: 12px;
+  }
+  .nap-btn-sub {
+    font-size: 12px;
   }
   .grid2 {
     gap: 6px;

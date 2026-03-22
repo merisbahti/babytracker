@@ -2,7 +2,6 @@ import { createEffect, createSignal, onCleanup, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
 import type { AppState, LogEntry } from "./types";
 import { saveState, subscribeToRoom } from "./firebase";
-import NapBanner from "./components/NapBanner";
 import ActionButtons from "./components/ActionButtons";
 import Summary from "./components/Summary";
 import LogTab from "./components/LogTab";
@@ -212,15 +211,11 @@ function App() {
 
       <Show when={tab() === "main"}>
         <div class="main-pad">
-          <NapBanner
+          <ActionButtons
             napping={derived().napping}
             napStart={derived().napStart}
             lastNapEnd={derived().lastNapEnd ?? 0}
             lastNapDuration={derived().lastNapDuration ?? 0}
-            tick={tick()}
-          />
-          <ActionButtons
-            napping={derived().napping}
             lastFeed={derived().lastFeed ?? 0}
             lastFormula={derived().lastFormula ?? 0}
             lastVitaminD={derived().lastVitaminD ?? 0}

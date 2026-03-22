@@ -2,6 +2,9 @@ import type { Component } from "solid-js";
 
 interface ActionButtonsProps {
   napping: boolean;
+  napStart: number;
+  lastNapEnd: number;
+  lastNapDuration: number;
   lastFeed: number;
   lastFormula: number;
   lastVitaminD: number;
@@ -14,7 +17,6 @@ interface ActionButtonsProps {
 
 function timeAgo(ts: number): string {
   if (!ts) return "—";
-  // access is done at call time
   const diff = Math.floor((Date.now() - ts) / 1000);
   if (diff < 60) return `${diff}s`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m`;
@@ -23,11 +25,28 @@ function timeAgo(ts: number): string {
   return m > 0 ? `${h}t ${m}m` : `${h}t`;
 }
 
+function formatDuration(ms: number): string {
+  const s = Math.floor(ms / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  if (h > 0) return `${h}t ${m}m`;
+  return `${m}m`;
+}
+
 const ActionButtons: Component<ActionButtonsProps> = (props) => {
-  // Use tick to force reactivity on timeAgo
+  void props.tick;
   const feedAgo = () => { void props.tick; return timeAgo(props.lastFeed); };
   const formulaAgo = () => { void props.tick; return timeAgo(props.lastFormula); };
   const vitaminDAgo = () => { void props.tick; return timeAgo(props.lastVitaminD); };
+  const napDur = () => {
+    void props.tick;
+    return props.napping && props.napStart ? Date.now() - props.napStart : 0;
+  };
+  const napSub = () => {
+    if (props.napping) return formatDuration(napDur());
+    if (props.lastNapEnd) return `Senaste: ${formatDuration(props.lastNapDuration)} · ${timeAgo(props.lastNapEnd)}`;
+    return "";
+  };
 
   return (
     <>
@@ -39,7 +58,8 @@ const ActionButtons: Component<ActionButtonsProps> = (props) => {
         }}
         onClick={props.onNap}
       >
-        {props.napping ? "⏹ Avsluta nap" : "▶ Starta nap"}
+        <div>{props.napping ? "⏹ Avsluta nap" : "▶ Starta nap"}</div>
+        <div class="nap-btn-sub">{napSub()}</div>
       </button>
 
       <div class="grid2">
