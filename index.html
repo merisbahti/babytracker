@@ -221,6 +221,7 @@
       };
 
       window.deleteLog = (index) => {
+        if (!confirm("Ta bort händelsen?")) return;
         state.logs = state.logs.filter((_, i) => i !== index);
         saveState();
         render();
