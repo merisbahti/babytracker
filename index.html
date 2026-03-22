@@ -235,7 +235,7 @@
       const syncSummaryFromLogs = () => {
         const logs = state.logs || [];
         const latest = (label) => {
-          const entry = [...logs].reverse().find(l => l.label === label);
+          const entry = logs.find(l => l.label === label);
           return entry ? entry.ts : 0;
         };
         state.lastFeed = latest("🍽️ Matad");
@@ -243,11 +243,10 @@
         state.lastVitaminD = latest("☀️ D-vitamin");
 
         // Derive lastNapEnd and lastNapDuration from logs
-        const rev = [...logs].reverse();
-        const lastEnd = rev.find(l => l.label.startsWith("💤 Nap avslutad"));
+        const lastEnd = logs.find(l => l.label.startsWith("💤 Nap avslutad"));
         if (lastEnd) {
           state.lastNapEnd = lastEnd.ts;
-          const lastStart = rev.find(l => l.label === "😴 Nap startad" && l.ts <= lastEnd.ts);
+          const lastStart = logs.find(l => l.label === "😴 Nap startad" && l.ts <= lastEnd.ts);
           state.lastNapDuration = lastStart ? lastEnd.ts - lastStart.ts : state.lastNapDuration;
         }
       };
