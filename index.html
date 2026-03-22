@@ -232,6 +232,17 @@
         document.getElementById("tm-s").textContent = pad2(d.getSeconds());
       };
 
+      const syncSummaryFromLogs = () => {
+        const logs = state.logs || [];
+        const latest = (label) => {
+          const entry = [...logs].reverse().find(l => l.label === label);
+          return entry ? entry.ts : 0;
+        };
+        state.lastFeed = latest("🍽️ Matad");
+        state.lastFormula = latest("🍼 Ersättning");
+        state.lastVitaminD = latest("☀️ D-vitamin");
+      };
+
       window.adjustTime = (unit, delta) => {
         if (unit === "h") _editTs += delta * 3600000;
         else if (unit === "m") _editTs += delta * 60000;
@@ -267,6 +278,7 @@
 
       // ── Render ────────────────────────────────────
       function render() {
+        syncSummaryFromLogs();
         const { napping, napStart } = deriveNapState(state.logs);
         const napDur = napping && napStart ? Date.now() - napStart : 0;
 
