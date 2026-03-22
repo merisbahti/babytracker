@@ -49,6 +49,7 @@
       let state = {
         lastFeed: 0,
         lastFormula: 0,
+        lastVitaminD: 0,
         napping: false,
         napStart: 0,
         lastNapEnd: 0,
@@ -72,6 +73,7 @@
               state = {
                 lastFeed: data.lastFeed || 0,
                 lastFormula: data.lastFormula || 0,
+                lastVitaminD: data.lastVitaminD || 0,
                 napping: data.napping === true,
                 napStart: data.napStart || 0,
                 lastNapEnd: data.lastNapEnd || 0,
@@ -105,6 +107,7 @@
           await update(dbRef, {
             lastFeed: state.lastFeed || 0,
             lastFormula: state.lastFormula || 0,
+            lastVitaminD: state.lastVitaminD || 0,
             napping: state.napping,
             napStart: state.napStart || 0,
             lastNapEnd: state.lastNapEnd || 0,
@@ -174,6 +177,13 @@
         render();
       };
 
+      window.handleVitaminD = () => {
+        state.lastVitaminD = Date.now();
+        addLog("☀️ D-vitamin");
+        saveState();
+        render();
+      };
+
       window.handleNap = () => {
         if (!state.napping) {
           state.napping = true;
@@ -207,6 +217,12 @@
 
       window.setTab = (t) => {
         currentTab = t;
+        render();
+      };
+
+      window.deleteLog = (index) => {
+        state.logs = state.logs.filter((_, i) => i !== index);
+        saveState();
         render();
       };
 
@@ -272,6 +288,9 @@
         document.getElementById("formula-sub").textContent = timeAgo(
           state.lastFormula,
         );
+        document.getElementById("vitamind-sub").textContent = timeAgo(
+          state.lastVitaminD,
+        );
         document.getElementById("sum-feed").textContent = state.lastFeed
           ? `${formatTime(state.lastFeed)} · ${timeAgo(state.lastFeed)}`
           : "—";
@@ -281,6 +300,9 @@
               timeAgo(state.lastFormula)
             }`
             : "—";
+        document.getElementById("sum-vitamind").textContent = state.lastVitaminD
+          ? `${formatTime(state.lastVitaminD)} · ${timeAgo(state.lastVitaminD)}`
+          : "—";
         document.getElementById("sum-nap").textContent =
           state.lastNapEnd
             ? `${formatTime(state.lastNapEnd)} · ${
@@ -293,12 +315,13 @@
           document.getElementById("log-list").innerHTML =
             logs.length === 0
               ? `<div style="text-align:center;color:#bbb;padding:40px">Ingen logg än</div>`
-              : logs.map((l) => `
+              : logs.map((l, i) => `
               <div style="background:#fff;border-radius:10px;border:1.5px solid #e8d5b7;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
                 <span style="font-size:15px">${l.label}</span>
-                <span style="font-size:12px;color:#a07850">${
-                formatTime(l.ts)
-              } · ${timeAgo(l.ts)}</span>
+                <span style="display:flex;align-items:center;gap:10px">
+                  <span style="font-size:12px;color:#a07850">${formatTime(l.ts)} · ${timeAgo(l.ts)}</span>
+                  <button onclick="deleteLog(${i})" style="background:none;border:none;color:#c0a080;font-size:16px;padding:0;line-height:1;cursor:pointer">✕</button>
+                </span>
               </div>`).join("");
         }
       }
@@ -557,6 +580,15 @@
               <span class="big-btn-label">Ersättning</span>
               <span class="big-btn-sub" id="formula-sub">—</span>
             </button>
+            <button
+              class="big-btn"
+              onclick="handleVitaminD()"
+              style="background: #e8c840; box-shadow: 0 4px 0 #b89a10; grid-column: 1 / -1"
+            >
+              <span class="big-btn-emoji">☀️</span>
+              <span class="big-btn-label">D-vitamin</span>
+              <span class="big-btn-sub" id="vitamind-sub">—</span>
+            </button>
           </div>
 
           <div class="summary">
@@ -566,6 +598,9 @@
             </div>
             <div class="sum-row">
               <span>🍼 Ersättning</span><span id="sum-formula">—</span>
+            </div>
+            <div class="sum-row">
+              <span>☀️ D-vitamin</span><span id="sum-vitamind">—</span>
             </div>
             <div class="sum-row">
               <span>💤 Nap</span><span id="sum-nap">—</span>
