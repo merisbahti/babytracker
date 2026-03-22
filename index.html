@@ -50,12 +50,18 @@
         lastFeed: 0,
         lastFormula: 0,
         lastVitaminD: 0,
-        napping: false,
-        napStart: 0,
         lastNapEnd: 0,
         lastNapDuration: 0,
         logs: [],
       };
+
+      function deriveNapState(logs) {
+        for (const log of logs) {
+          if (log.label === "😴 Nap startad") return { napping: true, napStart: log.ts };
+          if (log.label.startsWith("💤 Nap avslutad")) return { napping: false, napStart: 0 };
+        }
+        return { napping: false, napStart: 0 };
+      }
 
       let dbRef;
       let currentTab = "main";
@@ -74,8 +80,6 @@
                 lastFeed: data.lastFeed || 0,
                 lastFormula: data.lastFormula || 0,
                 lastVitaminD: data.lastVitaminD || 0,
-                napping: data.napping === true,
-                napStart: data.napStart || 0,
                 lastNapEnd: data.lastNapEnd || 0,
                 lastNapDuration: data.lastNapDuration || 0,
                 // Firebase can turn arrays into {0:…,1:…} objects — convert back
@@ -108,8 +112,6 @@
             lastFeed: state.lastFeed || 0,
             lastFormula: state.lastFormula || 0,
             lastVitaminD: state.lastVitaminD || 0,
-            napping: state.napping,
-            napStart: state.napStart || 0,
             lastNapEnd: state.lastNapEnd || 0,
             lastNapDuration: state.lastNapDuration || 0,
             logs: state.logs,
@@ -185,16 +187,13 @@
       };
 
       window.handleNap = () => {
-        if (!state.napping) {
-          state.napping = true;
-          state.napStart = Date.now();
+        const { napping, napStart } = deriveNapState(state.logs);
+        if (!napping) {
           addLog("😴 Nap startad");
         } else {
-          const dur = Date.now() - state.napStart;
-          state.napping = false;
+          const dur = Date.now() - napStart;
           state.lastNapEnd = Date.now();
           state.lastNapDuration = dur;
-          state.napStart = 0;
           addLog(`💤 Nap avslutad (${formatDuration(dur)})`);
         }
         saveState();
@@ -254,9 +253,8 @@
 
       // ── Render ────────────────────────────────────
       function render() {
-        const napDur = state.napping && state.napStart
-          ? Date.now() - state.napStart
-          : 0;
+        const { napping, napStart } = deriveNapState(state.logs);
+        const napDur = napping && napStart ? Date.now() - napStart : 0;
 
         document.getElementById("room-label").textContent =
           `rum: ${ROOM}`;
@@ -277,36 +275,22 @@
           currentTab === "log" ? "block" : "none";
 
         const napBanner = document.getElementById("nap-banner");
-        napBanner.style.background = state.napping
-          ? "#d4edda"
-          : "#fff3cd";
-        napBanner.style.border = `2px solid ${
-          state.napping ? "#8bc34a" : "#e8c840"
-        }`;
-        document.getElementById("nap-emoji").textContent = state.napping
-          ? "😴"
-          : "👀";
-        document.getElementById("nap-label").textContent = state.napping
-          ? "Sover"
-          : "Vaken";
-        document.getElementById("nap-timer").textContent = state.napping
-          ? formatDuration(napDur)
-          : "";
+        napBanner.style.background = napping ? "#d4edda" : "#fff3cd";
+        napBanner.style.border = `2px solid ${napping ? "#8bc34a" : "#e8c840"}`;
+        document.getElementById("nap-emoji").textContent = napping ? "😴" : "👀";
+        document.getElementById("nap-label").textContent = napping ? "Sover" : "Vaken";
+        document.getElementById("nap-timer").textContent = napping ? formatDuration(napDur) : "";
         document.getElementById("nap-sub").textContent =
-          !state.napping && state.lastNapEnd
+          !napping && state.lastNapEnd
             ? `Senaste nap: ${
               formatDuration(state.lastNapDuration)
             } · ${timeAgo(state.lastNapEnd)}`
             : "";
 
         const napBtn = document.getElementById("napBtn");
-        napBtn.textContent = state.napping
-          ? "⏹ Avsluta nap"
-          : "▶ Starta nap";
-        napBtn.style.background = state.napping ? "#e57373" : "#7abf7a";
-        napBtn.style.boxShadow = state.napping
-          ? "0 4px 0 #c0392b"
-          : "0 4px 0 #4a9e4a";
+        napBtn.textContent = napping ? "⏹ Avsluta nap" : "▶ Starta nap";
+        napBtn.style.background = napping ? "#e57373" : "#7abf7a";
+        napBtn.style.boxShadow = napping ? "0 4px 0 #c0392b" : "0 4px 0 #4a9e4a";
 
         document.getElementById("feed-sub").textContent = timeAgo(
           state.lastFeed,
