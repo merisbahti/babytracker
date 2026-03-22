@@ -257,6 +257,7 @@
           document.getElementById("time-modal").style.display = "none";
         };
         document.getElementById("time-delete").onclick = () => {
+          if (!confirm("Ta bort händelsen?")) return;
           state.logs = state.logs.filter((_, i) => i !== _editIndex);
           saveState();
           render();
