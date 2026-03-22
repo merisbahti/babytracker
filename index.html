@@ -256,23 +256,32 @@
         _editTs = entry.ts;
 
         updateTimePicker();
+        document.getElementById("time-delete-confirm").style.display = "none";
         document.getElementById("time-modal").style.display = "flex";
+
+        const closeModal = () => {
+          document.getElementById("time-modal").style.display = "none";
+          document.getElementById("time-delete-confirm").style.display = "none";
+        };
 
         document.getElementById("time-ok").onclick = () => {
           state.logs[_editIndex] = { ...state.logs[_editIndex], ts: _editTs };
           saveState();
           render();
-          document.getElementById("time-modal").style.display = "none";
+          closeModal();
         };
-        document.getElementById("time-cancel").onclick = () => {
-          document.getElementById("time-modal").style.display = "none";
-        };
+        document.getElementById("time-cancel").onclick = closeModal;
         document.getElementById("time-delete").onclick = () => {
-          if (!confirm("Ta bort händelsen?")) return;
+          document.getElementById("time-delete-confirm").style.display = "block";
+        };
+        document.getElementById("time-delete-no").onclick = () => {
+          document.getElementById("time-delete-confirm").style.display = "none";
+        };
+        document.getElementById("time-delete-yes").onclick = () => {
           state.logs = state.logs.filter((_, i) => i !== _editIndex);
           saveState();
           render();
-          document.getElementById("time-modal").style.display = "none";
+          closeModal();
         };
       };
 
@@ -586,6 +595,13 @@
         <div style="display:flex;gap:10px;margin-bottom:10px">
           <button id="time-cancel" style="flex:1;padding:12px;border:1.5px solid #e8d5b7;border-radius:10px;background:#fff;font-size:14px;font-family:Georgia,serif;color:#7a5c3a">Avbryt</button>
           <button id="time-ok" style="flex:1;padding:12px;border:none;border-radius:10px;background:#c9a97a;color:#fff;font-size:14px;font-weight:bold;font-family:Georgia,serif">Spara</button>
+        </div>
+        <div id="time-delete-confirm" style="display:none;margin-top:4px">
+          <div style="font-size:13px;color:#c07070;text-align:center;margin-bottom:8px">Säker?</div>
+          <div style="display:flex;gap:10px">
+            <button id="time-delete-no" style="flex:1;padding:12px;border:1.5px solid #e8d5b7;border-radius:10px;background:#fff;font-size:14px;font-family:Georgia,serif;color:#7a5c3a">Nej</button>
+            <button id="time-delete-yes" style="flex:1;padding:12px;border:none;border-radius:10px;background:#e07070;color:#fff;font-size:14px;font-weight:bold;font-family:Georgia,serif">Ta bort</button>
+          </div>
         </div>
         <button id="time-delete" style="width:100%;padding:12px;border:1.5px solid #e8b7b7;border-radius:10px;background:#fff;font-size:14px;font-family:Georgia,serif;color:#c07070;cursor:pointer">Ta bort händelsen</button>
       </div>
