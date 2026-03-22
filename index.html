@@ -54,9 +54,11 @@
             state = { ...state, ...data, logs: data.logs || [] };
             render();
           }
+          setStatus("🟢 Ansluten");
+        }, (error) => {
+          setStatus("🔴 Läsfel: " + error.code);
+          console.error("Firebase read error:", error);
         });
-
-        setStatus("🟢 Ansluten");
       } catch (e) {
         setStatus("🔴 Firebase-fel – kontrollera config");
         console.error(e);
