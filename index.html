@@ -274,6 +274,14 @@
 
         document.getElementById("time-ok").onclick = () => {
           state.logs[_editIndex] = { ...state.logs[_editIndex], ts: _editTs };
+          // If this is a nap end entry, update the duration in the label
+          const entry = state.logs[_editIndex];
+          if (entry.label.startsWith("💤 Nap avslutad")) {
+            const start = state.logs.find(l => l.label === "😴 Nap startad" && l.ts <= entry.ts);
+            if (start) {
+              state.logs[_editIndex] = { ...entry, label: `💤 Nap avslutad (${formatDuration(entry.ts - start.ts)})` };
+            }
+          }
           saveState();
           render();
           closeModal();
