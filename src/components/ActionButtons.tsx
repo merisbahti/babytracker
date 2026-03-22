@@ -34,8 +34,8 @@ const ActionButtons: Component<ActionButtonsProps> = (props) => {
       <button
         class="nap-btn"
         style={{
-          background: props.napping ? "#e57373" : "#7abf7a",
-          "box-shadow": props.napping ? "0 4px 0 #c0392b" : "0 4px 0 #4a9e4a",
+          background: props.napping ? "#7a2020" : "#2a6a2a",
+          "box-shadow": props.napping ? "0 4px 0 #4a1010" : "0 4px 0 #1a4a1a",
         }}
         onClick={props.onNap}
       >
@@ -45,7 +45,7 @@ const ActionButtons: Component<ActionButtonsProps> = (props) => {
       <div class="grid2">
         <button
           class="big-btn"
-          style={{ background: "#7ab8d4", "box-shadow": "0 4px 0 #4a8aaa" }}
+          style={{ background: "#1a4a6a", "box-shadow": "0 4px 0 #0a2a4a" }}
           onClick={props.onFeed}
         >
           <span class="big-btn-emoji">🍽️</span>
@@ -54,7 +54,7 @@ const ActionButtons: Component<ActionButtonsProps> = (props) => {
         </button>
         <button
           class="big-btn"
-          style={{ background: "#d49e6e", "box-shadow": "0 4px 0 #a06a3e" }}
+          style={{ background: "#6a3a1a", "box-shadow": "0 4px 0 #3a1a00" }}
           onClick={props.onFormula}
         >
           <span class="big-btn-emoji">🍼</span>
@@ -64,8 +64,8 @@ const ActionButtons: Component<ActionButtonsProps> = (props) => {
         <button
           class="big-btn"
           style={{
-            background: "#e8c840",
-            "box-shadow": "0 4px 0 #b89a10",
+            background: "#5a4a00",
+            "box-shadow": "0 4px 0 #2a2200",
             "grid-column": "1 / -1",
           }}
           onClick={props.onVitaminD}

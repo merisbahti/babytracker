@@ -5,9 +5,9 @@
   -webkit-tap-highlight-color: transparent;
 }
 body {
-  background: #fdf6ee;
+  background: #111;
   font-family: Georgia, serif;
-  color: #2c1a0e;
+  color: #eee;
   max-width: 420px;
   margin: 0 auto;
   min-height: 100vh;
@@ -24,8 +24,8 @@ button:active {
 
 .tabs {
   display: flex;
-  background: #f5ece0;
-  border-bottom: 2px solid #e8d5b7;
+  background: #1a1a1a;
+  border-bottom: 2px solid #333;
 }
 .tab-btn {
   flex: 1;
@@ -35,14 +35,14 @@ button:active {
   font-size: 15px;
   margin-bottom: -2px;
   background: transparent;
-  color: #a07850;
+  color: #666;
   position: relative;
 }
 .tab-btn--active {
-  color: #2c1a0e;
-  border-bottom-color: #c9a97a;
+  color: #eee;
+  border-bottom-color: #888;
   font-weight: bold;
-  background: #fdf6ee;
+  background: #111;
 }
 
 .main-pad {
@@ -65,15 +65,14 @@ button:active {
 .nap-timer {
   font-size: 22px;
   font-weight: bold;
-  color: #4a7c59;
   margin-top: 4px;
   min-height: 28px;
 }
 .nap-sub {
   font-size: 13px;
-  color: #7a6030;
   margin-top: 4px;
   min-height: 18px;
+  opacity: 0.75;
 }
 
 .nap-btn {
@@ -113,18 +112,18 @@ button:active {
 }
 .big-btn-sub {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .summary {
-  background: #fff;
+  background: #1a1a1a;
   border-radius: 14px;
-  border: 1.5px solid #e8d5b7;
+  border: 1.5px solid #333;
   padding: 14px 16px;
 }
 .summary-title {
   font-size: 12px;
-  color: #a07850;
+  color: #666;
   margin-bottom: 8px;
   font-weight: bold;
   letter-spacing: 1px;
@@ -134,11 +133,11 @@ button:active {
   display: flex;
   justify-content: space-between;
   padding: 6px 0;
-  border-top: 1px solid #f0e8d8;
+  border-top: 1px solid #2a2a2a;
   font-size: 14px;
 }
 .sum-row span:first-child {
-  color: #7a5c3a;
+  color: #888;
 }
 .sum-row span:last-child {
   font-weight: bold;
@@ -149,15 +148,15 @@ button:active {
 }
 .log-hint {
   font-size: 13px;
-  color: #a07850;
+  color: #555;
   margin-bottom: 12px;
   text-align: center;
 }
 
 .log-entry {
-  background: #fff;
+  background: #1a1a1a;
   border-radius: 10px;
-  border: 1.5px solid #e8d5b7;
+  border: 1.5px solid #2a2a2a;
   padding: 10px 14px;
   margin-bottom: 8px;
   display: flex;
@@ -170,30 +169,31 @@ button:active {
 }
 .log-entry-time {
   font-size: 12px;
-  color: #a07850;
+  color: #666;
 }
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .modal-box {
-  background: #fdf6ee;
+  background: #1a1a1a;
   border-radius: 16px;
   padding: 24px;
   width: 280px;
   font-family: Georgia, serif;
+  border: 1px solid #333;
 }
 .modal-title {
   font-size: 15px;
   font-weight: bold;
   margin-bottom: 16px;
-  color: #2c1a0e;
+  color: #eee;
 }
 .modal-time-row {
   display: flex;
@@ -211,25 +211,25 @@ button:active {
 .modal-adj-btn {
   width: 44px;
   height: 44px;
-  border: 1.5px solid #e8d5b7;
+  border: 1.5px solid #333;
   border-radius: 10px;
-  background: #fff;
+  background: #222;
   font-size: 20px;
-  color: #7a5c3a;
+  color: #bbb;
   cursor: pointer;
   touch-action: manipulation;
 }
 .modal-time-val {
   font-size: 22px;
   font-weight: bold;
-  color: #2c1a0e;
+  color: #eee;
   min-width: 32px;
   text-align: center;
 }
 .modal-time-sep {
   font-size: 24px;
   font-weight: bold;
-  color: #2c1a0e;
+  color: #eee;
   padding-bottom: 2px;
 }
 .modal-actions {
@@ -240,12 +240,12 @@ button:active {
 .modal-cancel-btn {
   flex: 1;
   padding: 12px;
-  border: 1.5px solid #e8d5b7;
+  border: 1.5px solid #333;
   border-radius: 10px;
-  background: #fff;
+  background: #222;
   font-size: 14px;
   font-family: Georgia, serif;
-  color: #7a5c3a;
+  color: #aaa;
   touch-action: manipulation;
 }
 .modal-save-btn {
@@ -253,7 +253,7 @@ button:active {
   padding: 12px;
   border: none;
   border-radius: 10px;
-  background: #c9a97a;
+  background: #444;
   color: #fff;
   font-size: 14px;
   font-weight: bold;
@@ -262,7 +262,7 @@ button:active {
 }
 .modal-delete-confirm-text {
   font-size: 13px;
-  color: #c07070;
+  color: #e07070;
   text-align: center;
   margin-bottom: 8px;
 }
@@ -273,12 +273,12 @@ button:active {
 .modal-delete-no-btn {
   flex: 1;
   padding: 12px;
-  border: 1.5px solid #e8d5b7;
+  border: 1.5px solid #333;
   border-radius: 10px;
-  background: #fff;
+  background: #222;
   font-size: 14px;
   font-family: Georgia, serif;
-  color: #7a5c3a;
+  color: #aaa;
   touch-action: manipulation;
 }
 .modal-delete-yes-btn {
@@ -286,7 +286,7 @@ button:active {
   padding: 12px;
   border: none;
   border-radius: 10px;
-  background: #e07070;
+  background: #a03030;
   color: #fff;
   font-size: 14px;
   font-weight: bold;
@@ -296,12 +296,12 @@ button:active {
 .modal-delete-btn {
   width: 100%;
   padding: 12px;
-  border: 1.5px solid #e8b7b7;
+  border: 1.5px solid #4a2020;
   border-radius: 10px;
-  background: #fff;
+  background: #222;
   font-size: 14px;
   font-family: Georgia, serif;
-  color: #c07070;
+  color: #e07070;
   cursor: pointer;
   touch-action: manipulation;
   margin-top: 10px;
@@ -309,14 +309,20 @@ button:active {
 
 @media (max-width: 200px) {
   body {
+    background: #000;
     padding-bottom: 10px;
   }
   .tabs {
+    background: #000;
     border-bottom-width: 1px;
+    border-bottom-color: #222;
   }
   .tab-btn {
     padding: 8px 0;
     font-size: 13px;
+  }
+  .tab-btn--active {
+    background: #000;
   }
   .main-pad {
     padding: 8px 6px;
@@ -364,6 +370,8 @@ button:active {
     font-size: 13px;
   }
   .summary {
+    background: #000;
+    border-color: #222;
     padding: 8px 10px;
     border-radius: 10px;
   }
@@ -374,6 +382,7 @@ button:active {
   .sum-row {
     font-size: 12px;
     padding: 4px 0;
+    border-top-color: #1a1a1a;
   }
   .log-pad {
     padding: 6px;
@@ -381,5 +390,26 @@ button:active {
   .log-hint {
     font-size: 11px;
     margin-bottom: 6px;
+  }
+  .log-entry {
+    background: #000;
+    border-color: #222;
+  }
+  .modal-box {
+    background: #000;
+    border-color: #222;
+  }
+  .modal-adj-btn {
+    background: #111;
+    border-color: #333;
+  }
+  .modal-cancel-btn,
+  .modal-delete-no-btn,
+  .modal-delete-btn {
+    background: #111;
+    border-color: #333;
+  }
+  .modal-save-btn {
+    background: #333;
   }
 }

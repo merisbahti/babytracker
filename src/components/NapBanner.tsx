@@ -37,8 +37,8 @@ const NapBanner: Component<NapBannerProps> = (props) => {
     <div
       class="nap-banner"
       style={{
-        background: props.napping ? "#d4edda" : "#fff3cd",
-        border: `2px solid ${props.napping ? "#8bc34a" : "#e8c840"}`,
+        background: props.napping ? "#1a2e1a" : "#2a2800",
+        border: `2px solid ${props.napping ? "#3a7a3a" : "#6a5a00"}`,
       }}
     >
       <div class="nap-emoji">{props.napping ? "😴" : "👀"}</div>

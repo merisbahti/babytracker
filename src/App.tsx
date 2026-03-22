@@ -74,7 +74,7 @@ function App() {
           "justify-content": "center",
           height: "100vh",
           "font-family": "Georgia,serif",
-          color: "#7a5c3a",
+          color: "#888",
           "font-size": "16px",
           padding: "20px",
           "text-align": "center",
