@@ -162,14 +162,14 @@
       // ── Actions ───────────────────────────────────
       window.handleFeed = () => {
         state.lastFeed = Date.now();
-        addLog("🍼 Matad");
+        addLog("🍽️ Matad");
         saveState();
         render();
       };
 
       window.handleFormula = () => {
         state.lastFormula = Date.now();
-        addLog("🥛 Ersättning");
+        addLog("🍼 Ersättning");
         saveState();
         render();
       };
@@ -544,7 +544,7 @@
               onclick="handleFeed()"
               style="background: #7ab8d4; box-shadow: 0 4px 0 #4a8aaa"
             >
-              <span class="big-btn-emoji">🍼</span>
+              <span class="big-btn-emoji">🍽️</span>
               <span class="big-btn-label">Matad</span>
               <span class="big-btn-sub" id="feed-sub">—</span>
             </button>
@@ -553,7 +553,7 @@
               onclick="handleFormula()"
               style="background: #d49e6e; box-shadow: 0 4px 0 #a06a3e"
             >
-              <span class="big-btn-emoji">🥛</span>
+              <span class="big-btn-emoji">🍼</span>
               <span class="big-btn-label">Ersättning</span>
               <span class="big-btn-sub" id="formula-sub">—</span>
             </button>
@@ -562,10 +562,10 @@
           <div class="summary">
             <div class="summary-title">Senast</div>
             <div class="sum-row">
-              <span>🍼 Mat</span><span id="sum-feed">—</span>
+              <span>🍽️ Mat</span><span id="sum-feed">—</span>
             </div>
             <div class="sum-row">
-              <span>🥛 Ersättning</span><span id="sum-formula">—</span>
+              <span>🍼 Ersättning</span><span id="sum-formula">—</span>
             </div>
             <div class="sum-row">
               <span>💤 Nap</span><span id="sum-nap">—</span>
