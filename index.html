@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Doris" />
+  <title>🌸 Doris</title>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+    // ─────────────────────────────────────────────
+    // 🔥 PASTE YOUR FIREBASE CONFIG HERE
+    // ─────────────────────────────────────────────
+    const firebaseConfig = {
+      apiKey: "AIzaSyCElfuWFwJQh9CZvqi9Sq753QzWgnb2W2E",
+      authDomain: "general-d26af.firebaseapp.com",
+      databaseURL: "https://general-d26af-default-rtdb.firebaseio.com",
+      projectId: "general-d26af",
+      storageBucket: "general-d26af.firebasestorage.app",
+      messagingSenderId: "928305137904",
+      appId: "1:928305137904:web:aa914759d17e7f78839a35"
+    };
+    // ─────────────────────────────────────────────
+
+    const ROOM = new URLSearchParams(window.location.search).get("room") || "doris";
+
+    let db, dbRef;
+    let state = {
+      lastFeed: null,
+      lastFormula: null,
+      napping: false,
+      napStart: null,
+      lastNapEnd: null,
+      lastNapDuration: null,
+      logs: []
+    };
+
+    // ── Firebase setup ──────────────────────────
+    function initFirebase() {
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+        dbRef = ref(db, `doris-tracker/${ROOM}`);
+
+        // Real-time listener
+        onValue(dbRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            state = { ...state, ...data, logs: data.logs || [] };
+            render();
+          }
+        });
+
+        setStatus("🟢 Ansluten");
+      } catch (e) {
+        setStatus("🔴 Firebase-fel – kontrollera config");
+        console.error(e);
+      }
+    }
+
+    async function saveState() {
+      if (!dbRef) return;
+      try {
+        await set(dbRef, state);
+      } catch (e) {
+        setStatus("⚠️ Kunde inte spara");
+      }
+    }
+
+    function setStatus(msg) {
+      const el = document.getElementById("status");
+      if (el) el.textContent = msg;
+    }
+
+    // ── Helpers ─────────────────────────────────
+    function timeAgo(ts) {
+      if (!ts) return "—";
+      const diff = Math.floor((Date.now() - ts) / 1000);
+      if (diff < 60) return `${diff}s sedan`;
+      if (diff < 3600) return `${Math.floor(diff / 60)}min sedan`;
+      const h = Math.floor(diff / 3600);
+      const m = Math.floor((diff % 3600) / 60);
+      return m > 0 ? `${h}h ${m}min sedan` : `${h}h sedan`;
+    }
+
+    function formatDuration(ms) {
+      if (!ms) return "—";
+      const s = Math.floor(ms / 1000);
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      if (h > 0) return `${h}h ${m}min`;
+      if (m > 0) return `${m}min ${sec}s`;
+      return `${sec}s`;
+    }
+
+    function formatTime(ts) {
+      if (!ts) return "—";
+      return new Date(ts).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function addLog(entry) {
+      const logs = [{ ...entry, ts: Date.now() }, ...(state.logs || [])].slice(0, 50);
+      state.logs = logs;
+    }
+
+    // ── Actions ──────────────────────────────────
+    window.handleFeed = () => {
+      state.lastFeed = Date.now();
+      addLog({ label: "🍼 Matad" });
+      saveState();
+    };
+
+    window.handleFormula = () => {
+      state.lastFormula = Date.now();
+      addLog({ label: "🥛 Ersättning" });
+      saveState();
+    };
+
+    window.handleNap = () => {
+      if (!state.napping) {
+        state.napping = true;
+        state.napStart = Date.now();
+        addLog({ label: "😴 Nap startad" });
+      } else {
+        const dur = Date.now() - state.napStart;
+        state.napping = false;
+        state.lastNapEnd = Date.now();
+        state.lastNapDuration = dur;
+        state.napStart = null;
+        addLog({ label: `💤 Nap avslutad (${formatDuration(dur)})` });
+      }
+      saveState();
+    };
+
+    window.copyLink = () => {
+      const url = `${location.origin}${location.pathname}?room=${ROOM}`;
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById("shareBtn");
+        btn.textContent = "✓ Kopierat!";
+        btn.style.background = "#7abf7a";
+        setTimeout(() => {
+          btn.textContent = "🔗 Dela";
+          btn.style.background = "#c9a97a";
+        }, 2000);
+      });
+    };
+
+    window.setTab = (t) => {
+      currentTab = t;
+      render();
+    };
+
+    // ── Render ───────────────────────────────────
+    let currentTab = "main";
+    let tickId;
+
+    function render() {
+      const napDur = state.napping ? Date.now() - state.napStart : null;
+
+      document.getElementById("room-label").textContent = `rum: ${ROOM}`;
+
+      // Tabs highlight
+      document.querySelectorAll(".tab-btn").forEach(b => {
+        const active = b.dataset.tab === currentTab;
+        b.style.fontWeight = active ? "bold" : "normal";
+        b.style.color = active ? "#2c1a0e" : "#a07850";
+        b.style.borderBottom = active ? "2px solid #c9a97a" : "2px solid transparent";
+        b.style.background = active ? "#fdf6ee" : "#f5ece0";
+      });
+
+      document.getElementById("tab-main").style.display = currentTab === "main" ? "block" : "none";
+      document.getElementById("tab-log").style.display = currentTab === "log" ? "block" : "none";
+
+      // Nap banner
+      const napBanner = document.getElementById("nap-banner");
+      napBanner.style.background = state.napping ? "#d4edda" : "#fff3cd";
+      napBanner.style.border = `2px solid ${state.napping ? "#8bc34a" : "#e8c840"}`;
+      document.getElementById("nap-emoji").textContent = state.napping ? "😴" : "👀";
+      document.getElementById("nap-label").textContent = state.napping ? "Doris sover" : "Doris är vaken";
+      document.getElementById("nap-timer").textContent = state.napping ? formatDuration(napDur) : "";
+      document.getElementById("nap-sub").textContent =
+        !state.napping && state.lastNapEnd
+          ? `Senaste nap: ${formatDuration(state.lastNapDuration)} · ${timeAgo(state.lastNapEnd)}`
+          : "";
+
+      // Nap button
+      const napBtn = document.getElementById("napBtn");
+      napBtn.textContent = state.napping ? "⏹ Avsluta nap" : "▶ Starta nap";
+      napBtn.style.background = state.napping ? "#e57373" : "#7abf7a";
+      napBtn.style.boxShadow = state.napping ? "0 4px 0 #c0392b" : "0 4px 0 #4a9e4a";
+
+      // Feed/formula subs
+      document.getElementById("feed-sub").textContent = timeAgo(state.lastFeed);
+      document.getElementById("formula-sub").textContent = timeAgo(state.lastFormula);
+
+      // Summary
+      document.getElementById("sum-feed").textContent = state.lastFeed ? `${formatTime(state.lastFeed)} · ${timeAgo(state.lastFeed)}` : "—";
+      document.getElementById("sum-formula").textContent = state.lastFormula ? `${formatTime(state.lastFormula)} · ${timeAgo(state.lastFormula)}` : "—";
+      document.getElementById("sum-nap").textContent = state.lastNapEnd ? `${formatTime(state.lastNapEnd)} · ${formatDuration(state.lastNapDuration)}` : "—";
+
+      // Log
+      const logEl = document.getElementById("log-list");
+      if (currentTab === "log") {
+        const logs = state.logs || [];
+        if (logs.length === 0) {
+          logEl.innerHTML = `<div style="text-align:center;color:#bbb;padding:40px">Ingen logg än</div>`;
+        } else {
+          logEl.innerHTML = logs.map(l => `
+            <div style="background:#fff;border-radius:10px;border:1.5px solid #e8d5b7;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:15px">${l.label}</span>
+              <span style="font-size:12px;color:#a07850">${formatTime(l.ts)} · ${timeAgo(l.ts)}</span>
+            </div>
+          `).join("");
+        }
+      }
+    }
+
+    // ── Tick ─────────────────────────────────────
+    function startTick() {
+      clearInterval(tickId);
+      tickId = setInterval(render, 1000);
+    }
+
+    // ── Init ─────────────────────────────────────
+    window.addEventListener("DOMContentLoaded", () => {
+      render();
+      startTick();
+      initFirebase();
+    });
+  </script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: #fdf6ee;
+      font-family: Georgia, serif;
+      color: #2c1a0e;
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+    button { cursor: pointer; font-family: Georgia, serif; }
+    button:active { transform: translateY(2px); }
+
+    /* Header */
+    .header {
+      background: #e8d5b7;
+      padding: 14px 20px 10px;
+      border-bottom: 2px solid #c9a97a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-title { font-size: 22px; font-weight: bold; letter-spacing: 1px; }
+    .header-room { font-size: 11px; color: #7a5c3a; margin-top: 2px; }
+    .header-status { font-size: 10px; color: #7a5c3a; margin-top: 1px; }
+
+    .share-btn {
+      background: #c9a97a;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 13px;
+      transition: background 0.3s;
+    }
+
+    /* Tabs */
+    .tabs { display: flex; border-bottom: 2px solid #e8d5b7; }
+    .tab-btn {
+      flex: 1;
+      padding: 12px 0;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-size: 15px;
+      margin-bottom: -2px;
+      transition: none;
+    }
+
+    /* Main tab */
+    .main-pad { padding: 20px 16px; }
+
+    .nap-banner {
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .nap-emoji { font-size: 32px; }
+    .nap-label { font-size: 17px; font-weight: bold; margin-top: 6px; }
+    .nap-timer { font-size: 22px; font-weight: bold; color: #4a7c59; margin-top: 4px; min-height: 28px; }
+    .nap-sub { font-size: 13px; color: #7a6030; margin-top: 4px; min-height: 18px; }
+
+    .nap-btn {
+      width: 100%;
+      padding: 22px 0;
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      border: none;
+      border-radius: 18px;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+      transition: box-shadow 0.2s, background 0.2s;
+    }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+
+    .big-btn {
+      border: none;
+      border-radius: 18px;
+      padding: 20px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .big-btn-emoji { font-size: 30px; }
+    .big-btn-label { font-size: 16px; font-weight: bold; color: #fff; }
+    .big-btn-sub { font-size: 11px; color: rgba(255,255,255,0.85); }
+
+    .summary {
+      background: #fff;
+      border-radius: 14px;
+      border: 1.5px solid #e8d5b7;
+      padding: 14px 16px;
+    }
+    .summary-title {
+      font-size: 12px;
+      color: #a07850;
+      margin-bottom: 8px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .sum-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-top: 1px solid #f0e8d8;
+      font-size: 14px;
+    }
+    .sum-row span:first-child { color: #7a5c3a; }
+    .sum-row span:last-child { font-weight: bold; }
+
+    /* Log tab */
+    .log-pad { padding: 16px; }
+    .log-hint { font-size: 13px; color: #a07850; margin-bottom: 12px; text-align: center; }
+
+    /* Config notice */
+    .config-notice {
+      background: #fff3cd;
+      border: 2px solid #f0c040;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .config-notice strong { display: block; font-size: 15px; margin-bottom: 6px; }
+    .config-notice code {
+      background: #fef9e7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="header-title">🌸 Doris</div>
+      <div class="header-room" id="room-label">rum: —</div>
+      <div class="header-status" id="status">⏳ Ansluter...</div>
+    </div>
+    <button class="share-btn" id="shareBtn" onclick="copyLink()">🔗 Dela</button>
+  </div>
+
+  <!-- Firebase config notice (shown if using placeholder config) -->
+  <div class="config-notice" id="config-notice">
+    <strong>⚙️ Sätt upp Firebase</strong>
+    1. Gå till <strong>console.firebase.google.com</strong> och skapa ett projekt<br>
+    2. Lägg till en <strong>Realtime Database</strong> (välj Europa-region)<br>
+    3. Gå till Projektinställningar → Dina appar → Lägg till webbapp<br>
+    4. Kopiera <code>firebaseConfig</code> och klistra in i HTML-filen (längst upp i &lt;script&gt;-taggen)<br>
+    5. I Databasregler, sätt <code>"read": true, "write": true</code> för enkelt delande
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn" data-tab="main" onclick="setTab('main')">Hem</button>
+    <button class="tab-btn" data-tab="log" onclick="setTab('log')">Logg</button>
+  </div>
+
+  <!-- Main Tab -->
+  <div id="tab-main">
+    <div class="main-pad">
+
+      <!-- Nap banner -->
+      <div class="nap-banner" id="nap-banner">
+        <div class="nap-emoji" id="nap-emoji">👀</div>
+        <div class="nap-label" id="nap-label">Doris är vaken</div>
+        <div class="nap-timer" id="nap-timer"></div>
+        <div class="nap-sub" id="nap-sub"></div>
+      </div>
+
+      <!-- Nap button -->
+      <button class="nap-btn" id="napBtn" onclick="handleNap()">▶ Starta nap</button>
+
+      <!-- Feed + Formula -->
+      <div class="grid2">
+        <button class="big-btn" onclick="handleFeed()" style="background:#7ab8d4;box-shadow:0 4px 0 #4a8aaa">
+          <span class="big-btn-emoji">🍼</span>
+          <span class="big-btn-label">Matad</span>
+          <span class="big-btn-sub" id="feed-sub">—</span>
+        </button>
+        <button class="big-btn" onclick="handleFormula()" style="background:#d49e6e;box-shadow:0 4px 0 #a06a3e">
+          <span class="big-btn-emoji">🥛</span>
+          <span class="big-btn-label">Ersättning</span>
+          <span class="big-btn-sub" id="formula-sub">—</span>
+        </button>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary">
+        <div class="summary-title">Senast</div>
+        <div class="sum-row"><span>🍼 Mat</span><span id="sum-feed">—</span></div>
+        <div class="sum-row"><span>🥛 Ersättning</span><span id="sum-formula">—</span></div>
+        <div class="sum-row"><span>💤 Nap</span><span id="sum-nap">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Log Tab -->
+  <div id="tab-log" style="display:none">
+    <div class="log-pad">
+      <div class="log-hint">Senaste 50 händelser</div>
+      <div id="log-list"></div>
+    </div>
+  </div>
+
+  <script>
+    // Hide config notice if Firebase config looks real
+    window.addEventListener("DOMContentLoaded", () => {
+      const script = document.querySelector("script[type='module']").textContent;
+      if (!script.includes("YOUR_API_KEY")) {
+        document.getElementById("config-notice").style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
