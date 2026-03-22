@@ -22,50 +22,27 @@ button:active {
   transform: translateY(2px);
 }
 
-.header {
-  background: #e8d5b7;
-  padding: 14px 20px 10px;
-  border-bottom: 2px solid #c9a97a;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.header-title {
-  font-size: 22px;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-.header-room {
-  font-size: 11px;
-  color: #7a5c3a;
-  margin-top: 2px;
-}
-.header-status {
-  font-size: 10px;
-  color: #7a5c3a;
-  margin-top: 1px;
-}
-.share-btn {
-  background: #c9a97a;
-  color: #fff;
-  border: none;
-  border-radius: 20px;
-  padding: 8px 14px;
-  font-size: 13px;
-  transition: background 0.3s;
-}
-
 .tabs {
   display: flex;
+  background: #f5ece0;
   border-bottom: 2px solid #e8d5b7;
 }
 .tab-btn {
   flex: 1;
-  padding: 12px 0;
+  padding: 10px 0 8px;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-bottom: 3px solid transparent;
   font-size: 15px;
   margin-bottom: -2px;
+  background: transparent;
+  color: #a07850;
+  position: relative;
+}
+.tab-btn--active {
+  color: #2c1a0e;
+  border-bottom-color: #c9a97a;
+  font-weight: bold;
+  background: #fdf6ee;
 }
 
 .main-pad {
@@ -333,20 +310,6 @@ button:active {
 @media (max-width: 200px) {
   body {
     padding-bottom: 10px;
-  }
-  .header {
-    padding: 6px 8px 5px;
-  }
-  .header-title {
-    font-size: 16px;
-    letter-spacing: 0;
-  }
-  .header-room,
-  .header-status {
-    font-size: 9px;
-  }
-  .share-btn {
-    display: none;
   }
   .tabs {
     border-bottom-width: 1px;

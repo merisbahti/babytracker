@@ -86,13 +86,11 @@ function App() {
   }
 
   const [state, setState] = createStore<AppState>({ ...emptyState });
-  const [status, setStatus] = createSignal("⏳ Ansluter...");
   const [tab, setTab] = createSignal<"main" | "log">("main");
   const [tick, setTick] = createSignal(0);
   const [modalOpen, setModalOpen] = createSignal(false);
   const [editIndex, setEditIndex] = createSignal(-1);
   const [editTs, setEditTs] = createSignal(0);
-  const [shareBtnText, setShareBtnText] = createSignal("🔗 Dela");
 
   // 1-second ticker
   createEffect(() => {
@@ -109,9 +107,8 @@ function App() {
           const synced = syncSummaryFromLogs(data);
           Object.assign(s, data, synced);
         }));
-        setStatus("🟢 Ansluten");
       },
-      () => setStatus("🔴 Fel")
+      () => {}
     );
     onCleanup(unsub);
   });
@@ -202,50 +199,13 @@ function App() {
     setModalOpen(false);
   };
 
-  const handleShare = () => {
-    const url = `${location.origin}${location.pathname}?room=${ROOM}`;
-    navigator.clipboard.writeText(url).then(() => {
-      setShareBtnText("✓ Kopierat!");
-      setTimeout(() => setShareBtnText("🔗 Dela"), 2000);
-    });
-  };
-
   return (
     <>
-      <div class="header">
-        <div>
-          <div class="header-title">🌸 Baby Tracker</div>
-          <div class="header-room">rum: {ROOM}</div>
-          <div class="header-status">{status()}</div>
-        </div>
-        <button class="share-btn" onClick={handleShare}>
-          {shareBtnText()}
-        </button>
-      </div>
-
       <div class="tabs">
-        <button
-          class="tab-btn"
-          style={{
-            "font-weight": tab() === "main" ? "bold" : "normal",
-            color: tab() === "main" ? "#2c1a0e" : "#a07850",
-            "border-bottom": tab() === "main" ? "2px solid #c9a97a" : "2px solid transparent",
-            background: tab() === "main" ? "#fdf6ee" : "#f5ece0",
-          }}
-          onClick={() => setTab("main")}
-        >
+        <button class={`tab-btn${tab() === "main" ? " tab-btn--active" : ""}`} onClick={() => setTab("main")}>
           Hem
         </button>
-        <button
-          class="tab-btn"
-          style={{
-            "font-weight": tab() === "log" ? "bold" : "normal",
-            color: tab() === "log" ? "#2c1a0e" : "#a07850",
-            "border-bottom": tab() === "log" ? "2px solid #c9a97a" : "2px solid transparent",
-            background: tab() === "log" ? "#fdf6ee" : "#f5ece0",
-          }}
-          onClick={() => setTab("log")}
-        >
+        <button class={`tab-btn${tab() === "log" ? " tab-btn--active" : ""}`} onClick={() => setTab("log")}>
           Logg
         </button>
       </div>
