@@ -1,0 +1,2 @@
+{:config-paths ["imports/metosin/malli"]
+ :linters {:type-mismatch {:level :error}}}

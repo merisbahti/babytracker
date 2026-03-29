@@ -1,4 +1,5 @@
-(ns babytracker.db)
+(ns babytracker.db
+  (:require [malli.experimental :as mx]))
 
 (def default-db
   {:logs []

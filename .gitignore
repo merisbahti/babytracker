@@ -8,7 +8,11 @@ out/
 
 # clojure
 .cpcache/
-.clj-kondo/
+.clj-kondo/imports/
+.clj-kondo/.cache/
+
+# lsp
+.lsp/.cache/
 
 # misc
 .DS_Store

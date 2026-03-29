@@ -1,0 +1,3 @@
+{:linters {:clj-kondo/all {:level :warning}}
+ :clj-kondo {:config {:linters {:clojure-lsp/unused-public-var {:level :warning}}
+                      :config-paths [".clj-kondo"]}}}
