@@ -5,6 +5,7 @@ node_modules/
 .shadow-cljs/
 public/js/
 out/
+docs/
 
 # clojure
 .cpcache/
