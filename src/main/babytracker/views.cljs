@@ -61,8 +61,10 @@
 ;; --- Summary ---
 
 (defn summary []
-  (let [{:keys [last-feed last-formula last-vitamin-d
-                last-nap-end last-nap-duration]} @(rf/subscribe [::subs/derived])
+  (let [{:keys [last-feed last-formula
+                last-vitamin-d
+                last-nap-end
+                last-nap-duration]} @(rf/subscribe [::subs/derived])
         _ @(rf/subscribe [::subs/tick])
         val-str #(if (pos? %) (str (utils/format-time %) " · " (utils/time-ago %)) "—")]
     [:div.summary

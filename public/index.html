@@ -2,70 +2,365 @@
 <html lang="sv">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Baby Tracker" />
     <title>Baby Tracker</title>
     <style>
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { background: #111; font-family: Georgia, serif; color: #eee; max-width: 420px; margin: 0 auto; min-height: 100vh; padding-bottom: 40px; }
-button { cursor: pointer; font-family: Georgia, serif; touch-action: manipulation; }
-button:active { transform: translateY(2px); }
-.tabs { display: flex; background: #1a1a1a; border-bottom: 2px solid #333; }
-.tab-btn { flex: 1; padding: 10px 0 8px; border: none; border-bottom: 3px solid transparent; font-size: 15px; margin-bottom: -2px; background: transparent; color: #666; position: relative; }
-.tab-btn--active { color: #eee; border-bottom-color: #888; font-weight: bold; background: #111; }
-.main-pad { padding: 20px 16px; }
-.nap-btn { width: 100%; padding: 18px 0 14px; font-size: 20px; font-weight: bold; color: #fff; border: none; border-radius: 18px; margin-bottom: 16px; letter-spacing: 0.5px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.nap-btn-sub { font-size: 13px; font-weight: normal; opacity: 0.8; min-height: 16px; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-.big-btn { border: none; border-radius: 18px; padding: 20px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.big-btn-emoji { font-size: 30px; }
-.big-btn-label { font-size: 16px; font-weight: bold; color: #fff; }
-.big-btn-sub { font-size: 11px; color: rgba(255,255,255,0.8); }
-.summary { background: #1a1a1a; border-radius: 14px; border: 1.5px solid #333; padding: 14px 16px; }
-.summary-title { font-size: 12px; color: #666; margin-bottom: 8px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
-.sum-row { display: flex; justify-content: space-between; padding: 6px 0; border-top: 1px solid #2a2a2a; font-size: 14px; }
-.sum-row span:first-child { color: #888; }
-.sum-row span:last-child { font-weight: bold; }
-.log-pad { padding: 16px; }
-.log-hint { font-size: 13px; color: #555; margin-bottom: 12px; text-align: center; }
-.log-entry { background: #1a1a1a; border-radius: 10px; border: 1.5px solid #2a2a2a; padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-.log-entry-label { font-size: 15px; }
-.log-entry-time { font-size: 12px; color: #666; }
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; }
-.modal-box { background: #1a1a1a; border-radius: 16px; padding: 24px; width: 280px; font-family: Georgia, serif; border: 1px solid #333; }
-.modal-title { font-size: 15px; font-weight: bold; margin-bottom: 16px; color: #eee; }
-.modal-time-row { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 20px; }
-.modal-time-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.modal-adj-btn { width: 44px; height: 44px; border: 1.5px solid #333; border-radius: 10px; background: #222; font-size: 20px; color: #bbb; cursor: pointer; touch-action: manipulation; }
-.modal-time-val { font-size: 22px; font-weight: bold; color: #eee; min-width: 32px; text-align: center; }
-.modal-time-sep { font-size: 24px; font-weight: bold; color: #eee; padding-bottom: 2px; }
-.modal-actions { display: flex; gap: 10px; margin-bottom: 10px; }
-.modal-cancel-btn { flex: 1; padding: 12px; border: 1.5px solid #333; border-radius: 10px; background: #222; font-size: 14px; font-family: Georgia, serif; color: #aaa; touch-action: manipulation; }
-.modal-save-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; background: #444; color: #fff; font-size: 14px; font-weight: bold; font-family: Georgia, serif; touch-action: manipulation; }
-.modal-delete-confirm-text { font-size: 13px; color: #e07070; text-align: center; margin-bottom: 8px; }
-.modal-delete-confirm-btns { display: flex; gap: 10px; }
-.modal-delete-no-btn { flex: 1; padding: 12px; border: 1.5px solid #333; border-radius: 10px; background: #222; font-size: 14px; font-family: Georgia, serif; color: #aaa; touch-action: manipulation; }
-.modal-delete-yes-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; background: #a03030; color: #fff; font-size: 14px; font-weight: bold; font-family: Georgia, serif; touch-action: manipulation; }
-.modal-delete-btn { width: 100%; padding: 12px; border: 1.5px solid #4a2020; border-radius: 10px; background: #222; font-size: 14px; font-family: Georgia, serif; color: #e07070; cursor: pointer; touch-action: manipulation; margin-top: 10px; }
-@media (max-width: 200px) {
-  body { background: #000; padding-bottom: 10px; }
-  .tabs { background: #000; border-bottom-width: 1px; border-bottom-color: #222; }
-  .tab-btn { padding: 8px 0; font-size: 13px; }
-  .tab-btn--active { background: #000; }
-  .main-pad { padding: 8px 6px; }
-  .nap-btn { padding: 12px 0 10px; font-size: 18px; margin-bottom: 8px; border-radius: 12px; }
-  .grid2 { gap: 6px; margin-bottom: 8px; }
-  .big-btn { padding: 14px 4px; border-radius: 12px; gap: 3px; }
-  .big-btn-emoji { font-size: 26px; }
-  .big-btn-label { font-size: 15px; }
-  .summary { background: #000; border-color: #222; padding: 8px 10px; border-radius: 10px; }
-  .log-entry { background: #000; border-color: #222; }
-  .modal-box { background: #000; border-color: #222; }
-  .modal-adj-btn, .modal-cancel-btn, .modal-delete-no-btn, .modal-delete-btn { background: #111; border-color: #333; }
-  .modal-save-btn { background: #333; }
-}
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background: #111;
+        font-family: Georgia, serif;
+        color: #eee;
+        max-width: 420px;
+        margin: 0 auto;
+        min-height: 100vh;
+        padding-bottom: 40px;
+      }
+      button {
+        cursor: pointer;
+        font-family: Georgia, serif;
+        touch-action: manipulation;
+      }
+      button:active {
+        transform: translateY(2px);
+      }
+      .tabs {
+        display: flex;
+        background: #1a1a1a;
+        border-bottom: 2px solid #333;
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 10px 0 8px;
+        border: none;
+        border-bottom: 3px solid transparent;
+        font-size: 15px;
+        margin-bottom: -2px;
+        background: transparent;
+        color: #666;
+        position: relative;
+      }
+      .tab-btn--active {
+        color: #eee;
+        border-bottom-color: #888;
+        font-weight: bold;
+        background: #111;
+      }
+      .main-pad {
+        padding: 20px 16px;
+      }
+      .nap-btn {
+        width: 100%;
+        padding: 18px 0 14px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #fff;
+        border: none;
+        border-radius: 18px;
+        margin-bottom: 16px;
+        letter-spacing: 0.5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .nap-btn-sub {
+        font-size: 13px;
+        font-weight: normal;
+        opacity: 0.8;
+        min-height: 16px;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .big-btn {
+        border: none;
+        border-radius: 18px;
+        padding: 20px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .big-btn-emoji {
+        font-size: 30px;
+      }
+      .big-btn-label {
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+      }
+      .big-btn-sub {
+        font-size: 16px;
+        color: rgb(255, 255, 255);
+      }
+      .summary {
+        background: #1a1a1a;
+        border-radius: 14px;
+        border: 1.5px solid #333;
+        padding: 14px 16px;
+      }
+      .summary-title {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .sum-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-top: 1px solid #2a2a2a;
+        font-size: 14px;
+      }
+      .sum-row span:first-child {
+        color: #fff;
+      }
+      .sum-row span:last-child {
+        font-weight: bold;
+      }
+      .log-pad {
+        padding: 16px;
+      }
+      .log-hint {
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 12px;
+        text-align: center;
+      }
+      .log-entry {
+        background: #1a1a1a;
+        border-radius: 10px;
+        border: 1.5px solid #2a2a2a;
+        padding: 10px 14px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+      }
+      .log-entry-label {
+        font-size: 15px;
+      }
+      .log-entry-time {
+        font-size: 12px;
+        color: #666;
+      }
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-box {
+        background: #1a1a1a;
+        border-radius: 16px;
+        padding: 24px;
+        width: 280px;
+        font-family: Georgia, serif;
+        border: 1px solid #333;
+      }
+      .modal-title {
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 16px;
+        color: #eee;
+      }
+      .modal-time-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .modal-time-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+      .modal-adj-btn {
+        width: 44px;
+        height: 44px;
+        border: 1.5px solid #333;
+        border-radius: 10px;
+        background: #222;
+        font-size: 20px;
+        color: #bbb;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      .modal-time-val {
+        font-size: 22px;
+        font-weight: bold;
+        color: #eee;
+        min-width: 32px;
+        text-align: center;
+      }
+      .modal-time-sep {
+        font-size: 24px;
+        font-weight: bold;
+        color: #eee;
+        padding-bottom: 2px;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .modal-cancel-btn {
+        flex: 1;
+        padding: 12px;
+        border: 1.5px solid #333;
+        border-radius: 10px;
+        background: #222;
+        font-size: 14px;
+        font-family: Georgia, serif;
+        color: #aaa;
+        touch-action: manipulation;
+      }
+      .modal-save-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: #444;
+        color: #fff;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: Georgia, serif;
+        touch-action: manipulation;
+      }
+      .modal-delete-confirm-text {
+        font-size: 13px;
+        color: #e07070;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+      .modal-delete-confirm-btns {
+        display: flex;
+        gap: 10px;
+      }
+      .modal-delete-no-btn {
+        flex: 1;
+        padding: 12px;
+        border: 1.5px solid #333;
+        border-radius: 10px;
+        background: #222;
+        font-size: 14px;
+        font-family: Georgia, serif;
+        color: #aaa;
+        touch-action: manipulation;
+      }
+      .modal-delete-yes-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: #a03030;
+        color: #fff;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: Georgia, serif;
+        touch-action: manipulation;
+      }
+      .modal-delete-btn {
+        width: 100%;
+        padding: 12px;
+        border: 1.5px solid #4a2020;
+        border-radius: 10px;
+        background: #222;
+        font-size: 14px;
+        font-family: Georgia, serif;
+        color: #e07070;
+        cursor: pointer;
+        touch-action: manipulation;
+        margin-top: 10px;
+      }
+      @media (max-width: 200px) {
+        body {
+          background: #000;
+          padding-bottom: 10px;
+        }
+        .tabs {
+          background: #000;
+          border-bottom-width: 1px;
+          border-bottom-color: #222;
+        }
+        .tab-btn {
+          padding: 8px 0;
+          font-size: 13px;
+        }
+        .tab-btn--active {
+          background: #000;
+        }
+        .main-pad {
+          padding: 8px 6px;
+        }
+        .nap-btn {
+          padding: 12px 0 10px;
+          font-size: 18px;
+          margin-bottom: 8px;
+          border-radius: 12px;
+        }
+        .grid2 {
+          gap: 6px;
+          margin-bottom: 8px;
+        }
+        .big-btn {
+          padding: 14px 4px;
+          border-radius: 12px;
+          gap: 3px;
+        }
+        .big-btn-emoji {
+          font-size: 26px;
+        }
+        .big-btn-label {
+          font-size: 15px;
+        }
+        .summary {
+          background: #000;
+          border-color: #222;
+          padding: 8px 10px;
+          border-radius: 10px;
+        }
+        .log-entry {
+          background: #000;
+          border-color: #222;
+        }
+        .modal-box {
+          background: #000;
+          border-color: #222;
+        }
+        .modal-adj-btn,
+        .modal-cancel-btn,
+        .modal-delete-no-btn,
+        .modal-delete-btn {
+          background: #111;
+          border-color: #333;
+        }
+        .modal-save-btn {
+          background: #333;
+        }
+      }
     </style>
   </head>
   <body>
