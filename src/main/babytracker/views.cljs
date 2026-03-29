@@ -71,9 +71,9 @@
      [:div.sum-row [:span "🍼 Ersättning"] [:span (val-str last-formula)]]
      [:div.sum-row [:span "☀️ D-vitamin"]  [:span (val-str last-vitamin-d)]]
      [:div.sum-row
-      [:span "💤 Nap"]
+      [:span "💤 Nap" (when (pos? last-nap-duration) (str " · " (utils/format-duration last-nap-duration)))]
       [:span (if (pos? last-nap-end)
-               (str (utils/format-time last-nap-end) " · " (utils/format-duration last-nap-duration))
+               (str (utils/format-time last-nap-end) " · " (utils/time-ago last-nap-end))
                "—")]]]))
 
 ;; --- Log tab ---
