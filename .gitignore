@@ -1,2 +1,15 @@
-dist
-node_modules
+# deps
+node_modules/
+
+# shadow-cljs
+.shadow-cljs/
+public/js/
+out/
+
+# clojure
+.cpcache/
+.clj-kondo/
+
+# misc
+.DS_Store
+*.log
