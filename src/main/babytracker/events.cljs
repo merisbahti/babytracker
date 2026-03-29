@@ -1,9 +1,7 @@
 (ns babytracker.events
   (:require [re-frame.core :as rf]
-            [clojure.string :as str]
             [babytracker.db :as db]
-            [babytracker.firebase :as firebase]
-            [babytracker.utils :as utils]))
+            [babytracker.firebase :as firebase]))
 
 (rf/reg-event-db
  ::initialize
@@ -78,19 +76,8 @@
  ::save-modal
  (fn [{:keys [db]} _]
    (let [{:keys [edit-index edit-ts]} (:modal db)
-         logs (:logs db)
-         entry (nth logs edit-index)
-         updated (if (str/starts-with? (:label entry) "💤 Nap avslutad")
-                   (let [start (->> logs
-                                    (filter #(and (= (:label %) "😴 Nap startad")
-                                                  (<= (:ts %) edit-ts)))
-                                    first)]
-                     (assoc entry :ts edit-ts
-                            :label (if start
-                                     (str "💤 Nap avslutad (" (utils/format-duration (- edit-ts (:ts start))) ")")
-                                     (:label entry))))
-                   (assoc entry :ts edit-ts))
-         new-logs (assoc logs edit-index updated)]
+         new-logs (assoc (:logs db) edit-index
+                         (assoc (nth (:logs db) edit-index) :ts edit-ts))]
      {:db (-> db
               (assoc :logs new-logs)
               (assoc-in [:modal :open?] false))

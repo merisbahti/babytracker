@@ -4,7 +4,7 @@
 
 (def LogEntry
   [:map
-   [:label :string]
+   [:label [:enum :feed :formula :vitamin-d :nap-start :nap-end]]
    [:ts pos-int?]])
 
 (def AppState

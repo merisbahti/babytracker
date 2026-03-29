@@ -1,6 +1,5 @@
 (ns babytracker.subs
-  (:require [re-frame.core :as rf]
-            [clojure.string :as str]))
+  (:require [re-frame.core :as rf]))
 
 (rf/reg-sub ::logs  (fn [db _] (:logs db)))
 (rf/reg-sub ::tab   (fn [db _] (:tab db)))
@@ -15,17 +14,17 @@
  ::derived
  :<- [::logs]
  (fn [logs _]
-   (let [napping? (loop [[entry & rest] logs]
-                    (cond
-                      (nil? entry) false
-                      (= (:label entry) "😴 Nap startad") true
-                      (str/starts-with? (:label entry) "💤 Nap avslutad") false
-                      :else (recur rest)))
-         nap-start (when napping?
-                     (:ts (first (filter #(= (:label %) "😴 Nap startad") logs))))
-         last-end  (first (filter #(str/starts-with? (:label %) "💤 Nap avslutad") logs))
+   (let [napping?   (loop [[entry & rest] logs]
+                      (cond
+                        (nil? entry)                  false
+                        (= (:label entry) :nap-start) true
+                        (= (:label entry) :nap-end)   false
+                        :else                         (recur rest)))
+         nap-start  (when napping?
+                      (:ts (first (filter #(= (:label %) :nap-start) logs))))
+         last-end   (first (filter #(= (:label %) :nap-end) logs))
          last-start (when last-end
-                      (first (filter #(and (= (:label %) "😴 Nap startad")
+                      (first (filter #(and (= (:label %) :nap-start)
                                            (<= (:ts %) (:ts last-end)))
                                      logs)))]
      {:napping?          napping?
@@ -34,6 +33,6 @@
       :last-nap-duration (if (and last-end last-start)
                            (- (:ts last-end) (:ts last-start))
                            0)
-      :last-feed         (latest-ts logs "🍽️ Matad")
-      :last-formula      (latest-ts logs "🍼 Ersättning")
-      :last-vitamin-d    (latest-ts logs "☀️ D-vitamin")})))
+      :last-feed         (latest-ts logs :feed)
+      :last-formula      (latest-ts logs :formula)
+      :last-vitamin-d    (latest-ts logs :vitamin-d)})))

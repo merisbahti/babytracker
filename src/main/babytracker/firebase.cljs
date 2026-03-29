@@ -8,7 +8,7 @@
   (str DB-URL "/tracker/" room ".json"))
 
 (defn- js->log-entry [^js e]
-  {:label (.-label e) :ts (.-ts e)})
+  {:label (keyword (.-label e)) :ts (.-ts e)})
 
 (defn- parse-logs [^js data]
   (let [raw (.-logs data)]

@@ -4,6 +4,15 @@
             [babytracker.subs :as subs]
             [babytracker.utils :as utils]))
 
+(defn- label->display [label]
+  (case label
+    :feed      "🍽️ Matad"
+    :formula   "🍼 Ersättning"
+    :vitamin-d "☀️ D-vitamin"
+    :nap-start "😴 Nap startad"
+    :nap-end   "💤 Nap avslutad"
+    (str label)))
+
 ;; --- Nap button ---
 
 (defn nap-button []
@@ -18,11 +27,7 @@
     [:button.nap-btn
      {:style    {:background (if napping? "#7a2020" "#2a6a2a")
                  :box-shadow (if napping? "0 4px 0 #4a1010" "0 4px 0 #1a4a1a")}
-      :on-click #(rf/dispatch
-                  [::events/log-action
-                   (if napping?
-                     (str "💤 Nap avslutad (" (utils/format-duration (- (.now js/Date) nap-start)) ")")
-                     "😴 Nap startad")])}
+      :on-click #(rf/dispatch [::events/log-action (if napping? :nap-end :nap-start)])}
      [:div (if napping? "⏹ Avsluta nap" "▶ Starta nap")]
      [:div.nap-btn-sub sub-text]]))
 
@@ -36,19 +41,19 @@
      [:div.grid2
       [:button.big-btn
        {:style    {:background "#1a4a6a" :box-shadow "0 4px 0 #0a2a4a"}
-        :on-click #(rf/dispatch [::events/log-action "🍽️ Matad"])}
+        :on-click #(rf/dispatch [::events/log-action :feed])}
        [:span.big-btn-emoji "🍽️"]
        [:span.big-btn-label "Matad"]
        [:span.big-btn-sub (utils/time-ago last-feed)]]
       [:button.big-btn
        {:style    {:background "#6a3a1a" :box-shadow "0 4px 0 #3a1a00"}
-        :on-click #(rf/dispatch [::events/log-action "🍼 Ersättning"])}
+        :on-click #(rf/dispatch [::events/log-action :formula])}
        [:span.big-btn-emoji "🍼"]
        [:span.big-btn-label "Ersättning"]
        [:span.big-btn-sub (utils/time-ago last-formula)]]
       [:button.big-btn
        {:style    {:background "#5a4a00" :box-shadow "0 4px 0 #2a2200" :grid-column "1 / -1"}
-        :on-click #(rf/dispatch [::events/log-action "☀️ D-vitamin"])}
+        :on-click #(rf/dispatch [::events/log-action :vitamin-d])}
        [:span.big-btn-emoji "☀️"]
        [:span.big-btn-label "D-vitamin"]
        [:span.big-btn-sub (utils/time-ago last-vitamin-d)]]]]))
@@ -84,7 +89,7 @@
         (fn [i {:keys [label ts]}]
           ^{:key i}
           [:div.log-entry {:on-click #(rf/dispatch [::events/open-modal i ts])}
-           [:span.log-entry-label label]
+           [:span.log-entry-label (label->display label)]
            [:span.log-entry-time (str (utils/format-time ts) " · " (utils/time-ago ts))]])
         logs))]))
 
