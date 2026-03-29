@@ -7,7 +7,6 @@
                 :output-dir "public/js"
                 :asset-path "/js"
                 :modules {:main {:init-fn babytracker.core/init}}
-                :devtools {:after-load babytracker.core/mount
-                          :preloads [user]}
+                :devtools {:after-load babytracker.core/mount}
                 :release {:output-dir "docs/assets"
                           :asset-path "/babytracker/assets"}}}}

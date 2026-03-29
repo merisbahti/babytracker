@@ -1,5 +1,6 @@
 (ns babytracker.schema
-  (:require [malli.core :as m]))
+  (:require
+   [malli.core :as m]))
 
 (def LogEntry
   [:map

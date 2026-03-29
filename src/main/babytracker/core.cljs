@@ -3,12 +3,14 @@
             [re-frame.core :as rf]
             [babytracker.events :as events]
             [babytracker.firebase :as firebase]
-            [babytracker.views :as views]))
+            [babytracker.views :as views]
+            ^:dev [malli.dev.cljs :as malli-dev]))
 
 (defonce ^:private unsub!   (atom nil))
 (defonce ^:private tick-id  (atom nil))
 
 (defn mount []
+  (when ^boolean goog.DEBUG (malli-dev/start!))
   (rdom/render [views/app] (.getElementById js/document "root")))
 
 (defonce ^:private visibility-listener (atom nil))
