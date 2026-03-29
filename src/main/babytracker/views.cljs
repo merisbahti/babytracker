@@ -134,7 +134,7 @@
       [:div {:style {:display "flex" :align-items "center" :justify-content "center"
                      :height "100vh" :color "#888" :font-size "16px"
                      :padding "20px" :text-align "center"}}
-       "Ange ?room= i URL:en"]
+       "Ange ?room= i URL:en (cljtest)"]
       [:<>
        [:div.tabs
         [:button {:class    (str "tab-btn" (when (= tab :main) " tab-btn--active"))
