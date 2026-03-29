@@ -16,7 +16,7 @@
       (let [arr (if (js/Array.isArray raw)
                   raw
                   (js/Object.values raw))]
-        (schema/coerce-logs (mapv js->log-entry arr)))
+        (vec (sort-by :ts > (schema/coerce-logs (mapv js->log-entry arr)))))
       [])))
 
 (defn save-state! [room logs]
