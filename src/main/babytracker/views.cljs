@@ -4,13 +4,13 @@
             [babytracker.subs :as subs]
             [babytracker.utils :as utils]))
 
-(defn- label->display [label]
+(defn- label->display [label & [duration]]
   (case label
     :feed      "🍽️ Matad"
     :formula   "🍼 Ersättning"
     :vitamin-d "☀️ D-vitamin"
     :nap-start "😴 Nap startad"
-    :nap-end   "💤 Nap avslutad"
+    :nap-end   (str "💤 Nap avslutad" (when duration (str " · " (utils/format-duration duration))))
     (str label)))
 
 ;; --- Nap button ---
@@ -81,17 +81,17 @@
 ;; --- Log tab ---
 
 (defn log-tab []
-  (let [logs @(rf/subscribe [::subs/logs])
+  (let [logs @(rf/subscribe [::subs/enriched-logs])
         _    @(rf/subscribe [::subs/tick])]
     [:div.log-pad
      [:div.log-hint "Tryck på en rad för att ändra tid"]
      (if (empty? logs)
        [:div {:style {:text-align "center" :color "#bbb" :padding "40px"}} "Ingen logg än"]
        (map-indexed
-        (fn [i {:keys [label ts]}]
+        (fn [i {:keys [label ts duration]}]
           ^{:key i}
           [:div.log-entry {:on-click #(rf/dispatch [::events/open-modal i ts])}
-           [:span.log-entry-label (label->display label)]
+           [:span.log-entry-label (label->display label duration)]
            [:span.log-entry-time (str (utils/format-time ts) " · " (utils/time-ago ts))]])
         logs))]))
 

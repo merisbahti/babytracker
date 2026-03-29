@@ -36,3 +36,16 @@
       :last-feed         (latest-ts logs :feed)
       :last-formula      (latest-ts logs :formula)
       :last-vitamin-d    (latest-ts logs :vitamin-d)})))
+
+(rf/reg-sub
+ ::enriched-logs
+ :<- [::logs]
+ (fn [logs _]
+   (mapv (fn [entry]
+           (if (= (:label entry) :nap-end)
+             (let [start (first (filter #(and (= (:label %) :nap-start)
+                                              (<= (:ts %) (:ts entry)))
+                                        logs))]
+               (assoc entry :duration (when start (- (:ts entry) (:ts start)))))
+             entry))
+         logs)))
