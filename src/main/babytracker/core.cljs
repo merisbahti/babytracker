@@ -11,16 +11,27 @@
 (defn mount []
   (rdom/render [views/app] (.getElementById js/document "root")))
 
+(defonce ^:private visibility-listener (atom nil))
+
+(defn- subscribe-room! [room]
+  (when-let [f @unsub!] (f))
+  (reset! unsub!
+          (firebase/subscribe!
+           room
+           #(rf/dispatch [::events/set-logs %])
+           #())))
+
 (defn init []
   (let [room (.get (js/URLSearchParams. (.-search js/location)) "room")]
     (rf/dispatch-sync [::events/initialize room])
     (when room
-      (when-let [f @unsub!] (f))
-      (reset! unsub!
-              (firebase/subscribe!
-               room
-               #(rf/dispatch [::events/set-logs %])
-               #())))
+      (subscribe-room! room)
+      (when-not @visibility-listener
+        (let [listener (fn []
+                         (when (= (.-visibilityState js/document) "visible")
+                           (subscribe-room! room)))]
+          (reset! visibility-listener listener)
+          (.addEventListener js/document "visibilitychange" listener))))
     (when-not @tick-id
       (reset! tick-id
               (js/setInterval #(rf/dispatch [::events/tick]) 1000)))
