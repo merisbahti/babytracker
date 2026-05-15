@@ -1,6 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#111111"/>
-  <g transform="translate(106, 109) scale(6.25)">
-    <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z" style="fill:#863bff;fill-opacity:1"/>
-  </g>
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="#111111"/>
+
+  <!-- Head -->
+  <circle cx="256" cy="265" r="178" fill="#FFD4A3"/>
+
+  <!-- Hair tuft -->
+  <ellipse cx="230" cy="96" rx="28" ry="36" fill="#A0522D" transform="rotate(-20 230 96)"/>
+  <ellipse cx="256" cy="88" rx="26" ry="38" fill="#A0522D"/>
+  <ellipse cx="282" cy="96" rx="28" ry="36" fill="#A0522D" transform="rotate(20 282 96)"/>
+
+  <!-- Eyes -->
+  <circle cx="203" cy="232" r="24" fill="#2C1A0E"/>
+  <circle cx="309" cy="232" r="24" fill="#2C1A0E"/>
+  <!-- Eye shine -->
+  <circle cx="212" cy="223" r="10" fill="#FFFFFF"/>
+  <circle cx="318" cy="223" r="10" fill="#FFFFFF"/>
+
+  <!-- Rosy cheeks -->
+  <ellipse cx="152" cy="290" rx="36" ry="24" fill="#FF9B9B" opacity="0.40"/>
+  <ellipse cx="360" cy="290" rx="36" ry="24" fill="#FF9B9B" opacity="0.40"/>
+
+  <!-- Pacifier -->
+  <!-- Left lobe of butterfly shield -->
+  <ellipse cx="228" cy="348" rx="48" ry="30" fill="#FF7EB3"/>
+  <!-- Right lobe -->
+  <ellipse cx="284" cy="348" rx="48" ry="30" fill="#FF7EB3"/>
+  <!-- Center dimple -->
+  <circle cx="256" cy="348" r="17" fill="#E0609A"/>
+  <!-- Nipple (teat going upward into mouth) -->
+  <ellipse cx="256" cy="326" rx="14" ry="20" fill="#E0609A"/>
+  <!-- Handle ring -->
+  <circle cx="256" cy="382" r="17" fill="none" stroke="#FF7EB3" stroke-width="9"/>
 </svg>
