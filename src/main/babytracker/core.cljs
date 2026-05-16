@@ -24,7 +24,10 @@
            #())))
 
 (defn init []
-  (let [room (.get (js/URLSearchParams. (.-search js/location)) "room")]
+  (let [url-room   (.get (js/URLSearchParams. (.-search js/location)) "room")
+        saved-room (js/localStorage.getItem "room")
+        room       (or url-room saved-room)]
+    (when url-room (js/localStorage.setItem "room" url-room))
     (rf/dispatch-sync [::events/initialize room])
     (when room
       (subscribe-room! room)
