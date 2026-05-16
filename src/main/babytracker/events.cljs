@@ -23,6 +23,19 @@
  (fn [db _]
    (update db :tick inc)))
 
+;; --- Room persistence ---
+
+(rf/reg-fx
+ ::set-room-fx
+ (fn [room]
+   (js/localStorage.setItem "room" room)
+   (.reload js/location)))
+
+(rf/reg-event-fx
+ ::set-room
+ (fn [_ [_ room]]
+   {::set-room-fx room}))
+
 ;; --- Firebase effect ---
 
 (rf/reg-fx

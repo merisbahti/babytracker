@@ -1,5 +1,6 @@
 (ns babytracker.views
   (:require [re-frame.core :as rf]
+            [reagent.core :as r]
             [babytracker.events :as events]
             [babytracker.subs :as subs]
             [babytracker.utils :as utils]))
@@ -132,16 +133,41 @@
             [:button.modal-delete-btn {:on-click #(rf/dispatch [::events/show-delete-confirm])}
              "Ta bort händelsen"])]]))))
 
+;; --- Room setup ---
+
+(defn room-setup []
+  (let [value (r/atom "")]
+    (fn []
+      (let [submit #(let [v (.trim @value)]
+                      (when (seq v)
+                        (rf/dispatch [::events/set-room v])))]
+        [:div {:style {:display "flex" :flex-direction "column" :align-items "center"
+                       :justify-content "center" :height "100vh" :padding "32px" :gap "16px"}}
+         [:div {:style {:font-size "48px"}} "👶"]
+         [:p {:style {:color "#aaa" :font-size "14px" :text-align "center" :margin "0"}}
+          "Ange rum-ID för att synka"]
+         [:input {:style     {:background "#1a1a1a" :border "1.5px solid #444" :border-radius "12px"
+                              :color "#eee" :font-size "16px" :font-family "Georgia, serif"
+                              :padding "14px 16px" :width "100%" :max-width "280px" :outline "none"}
+                  :type        "text"
+                  :placeholder "Rum-ID"
+                  :value       @value
+                  :on-change   #(reset! value (.. % -target -value))
+                  :on-key-down #(when (= "Enter" (.-key %)) (submit))}]
+         [:button {:style    {:background "#3a3a3a" :border "none" :border-radius "12px"
+                              :color "#fff" :font-size "16px" :font-weight "bold"
+                              :font-family "Georgia, serif" :padding "14px"
+                              :width "100%" :max-width "280px"}
+                   :on-click submit}
+          "Anslut"]]))))
+
 ;; --- Root ---
 
 (defn app []
   (let [room @(rf/subscribe [::subs/room])
         tab  @(rf/subscribe [::subs/tab])]
     (if-not room
-      [:div {:style {:display "flex" :align-items "center" :justify-content "center"
-                     :height "100vh" :color "#888" :font-size "16px"
-                     :padding "20px" :text-align "center"}}
-       "Ange ?room= i URL:en (cljtest)"]
+      [room-setup]
       [:<>
        [:div.tabs
         [:button {:class    (str "tab-btn" (when (= tab :main) " tab-btn--active"))
